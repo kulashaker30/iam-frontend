@@ -47,7 +47,7 @@ const Dashboard = () => {
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link
-                  to={`groups/${groupIdExample}/roles`}
+                  to={`roles`}
                   className={cn(
                     location.pathname.includes("/roles") &&
                       "bg-accent text-accent-foreground"

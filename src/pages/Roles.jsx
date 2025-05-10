@@ -7,7 +7,8 @@ import { fetchRoles, createRole, editRole, deleteRole } from '../features/rolesS
 const Roles = () => {
   const { groupId } = useParams(); // Get groupId from URL
   const dispatch = useDispatch();
-  const { roles, loading, error } = useSelector((state) => state.roles); // Access roles state from Redux store
+  const rolesState = useSelector((state) => state.roles);
+  const { roles = [], loading = false, error = null } = rolesState || {};
   const [newRoleName, setNewRoleName] = useState('');
   const [editingRoleId, setEditingRoleId] = useState(null);
   const [editedRoleName, setEditedRoleName] = useState('');

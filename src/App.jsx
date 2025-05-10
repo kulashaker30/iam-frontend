@@ -29,9 +29,9 @@ function App() {
       <Route element={<PrivateRoute />}>
         <Route path="/" element={<Dashboard />}>
           <Route path="groups" element={<Groups />} />
-          <Route path="groups/:id/roles" element={<Roles />} />
+          <Route path="roles" element={<Roles />} />
           <Route path="users" element={<Users />} />
-          <Route path="roles/:id/permissions" element={<Permissions />} />
+          <Route path="permissions" element={<Permissions />} />
         </Route>
       </Route>
 
