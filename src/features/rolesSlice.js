@@ -16,7 +16,7 @@ export const fetchRoles = createAsyncThunk("roles/fetchRoles", async () => {
 });
 
 export const createRole = createAsyncThunk("roles/createRole", async (name) => {
-  const res = await api.post("/roles", { name });
+  const res = await api.post("/roles", name);
   return res.data;
 });
 
