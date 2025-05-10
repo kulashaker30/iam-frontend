@@ -5,9 +5,9 @@ const Dashboard = () => {
   const token = localStorage.getItem("token");
 
   if (!token) return <Navigate to="/login" replace />;
-
+  
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{backgroundColor: "dark-gray"}}>
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white p-6 space-y-4">
         <h2 className="text-xl font-bold mb-6">Dashboard Menu</h2>

@@ -6,7 +6,7 @@ export default function Login() {
   const token = localStorage.getItem("token"); // or from Redux store
 
   if (token) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/users" replace />;
   }
 
   return (

@@ -1,28 +1,43 @@
 // src/features/usersSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { getToken } from '../utils/getToken';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = 'http://localhost:3001/api/users';
 
 // Thunks
 
-export const fetchGroupUsers = createAsyncThunk('users/fetchGroupUsers', async (groupId) => {
-  const response = await axios.get(`${API_URL}/groups/${groupId}/users`);
+export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
+  const response = await axios.get(API_URL, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
   return response.data;
 });
 
-export const createGroupUser = createAsyncThunk('users/createGroupUser', async ({ groupId, user }) => {
-  const response = await axios.post(`${API_URL}/groups/${groupId}/users`, user);
+export const createUser = createAsyncThunk('users/createUser', async (user) => {
+  const response = await axios.post(API_URL, user, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
   return response.data;
 });
 
-export const editGroupUser = createAsyncThunk('users/editGroupUser', async ({ groupId, userId, user }) => {
-  const response = await axios.put(`${API_URL}/groups/${groupId}/users/${userId}`, user);
+export const editUser = createAsyncThunk('users/editUser', async ({ userId, user }) => {
+  const response = await axios.put(`${API_URL}/${userId}`, user, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
   return response.data;
 });
 
-export const deleteGroupUser = createAsyncThunk('users/deleteGroupUser', async ({ groupId, userId }) => {
-  await axios.delete(`${API_URL}/groups/${groupId}/users/${userId}`);
+export const deleteUser = createAsyncThunk('users/deleteUser', async (userId) => {
+  await axios.delete(`${API_URL}/${userId}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
   return userId;
 });
 
@@ -37,18 +52,21 @@ const usersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchGroupUsers.fulfilled, (state, action) => {
+      .addCase(fetchUsers.fulfilled, (state, action) => {
         state.users = action.payload;
         state.loading = false;
       })
-      .addCase(createGroupUser.fulfilled, (state, action) => {
+      .addCase(createUser.fulfilled, (state, action) => {
         state.users.push(action.payload);
       })
-      .addCase(editGroupUser.fulfilled, (state, action) => {
-        const index = state.users.findIndex(user => user.id === action.payload.id);
-        if (index !== -1) state.users[index] = action.payload;
+      .addCase(editUser.fulfilled, (state, action) => {
+        const index = state.users.findIndex(u => u.id === action.payload.id);
+        if (index !== -1) {
+          state.users[index] = action.payload;
+          state.loading = false;
+        }
       })
-      .addCase(deleteGroupUser.fulfilled, (state, action) => {
+      .addCase(deleteUser.fulfilled, (state, action) => {
         state.users = state.users.filter(user => user.id !== action.payload);
       })
       .addMatcher(action => action.type.startsWith('users/') && action.type.endsWith('/pending'), (state) => {

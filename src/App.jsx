@@ -21,16 +21,16 @@ function App() {
       <Route
         path="/"
         element={
-          token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+          token ? <Navigate to="/" /> : <Navigate to="/login" />
         }
       />
 
       {/* Protected Routes */}
       <Route element={<PrivateRoute />}>
-        <Route path="/dashboard" element={<Dashboard />}>
+        <Route path="/" element={<Dashboard />}>
           <Route path="groups" element={<Groups />} />
           <Route path="groups/:id/roles" element={<Roles />} />
-          <Route path="groups/:id/users" element={<Users />} />
+          <Route path="users" element={<Users />} />
           <Route path="roles/:id/permissions" element={<Permissions />} />
         </Route>
       </Route>
