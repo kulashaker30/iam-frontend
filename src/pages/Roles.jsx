@@ -1,8 +1,16 @@
 // src/Pages/Roles.jsx
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom'; // To access groupId from the URL
-import { fetchRoles, createRole, editRole, deleteRole } from '../features/rolesSlice';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom"; // To access groupId from the URL
+import {
+  createRole,
+  deleteRole,
+  editRole,
+  fetchRoles,
+} from "../features/rolesSlice";
 
 const Roles = () => {
   const { groupId } = useParams(); // Get groupId from URL
@@ -11,7 +19,7 @@ const Roles = () => {
   const { roles = [], loading = false, error = null } = rolesState || {};
   const [newRoleName, setNewRoleName] = useState('');
   const [editingRoleId, setEditingRoleId] = useState(null);
-  const [editedRoleName, setEditedRoleName] = useState('');
+  const [editedRoleName, setEditedRoleName] = useState("");
 
   useEffect(() => {
     dispatch(fetchRoles(groupId)); // Fetch roles for the specific group when component mounts
@@ -21,7 +29,7 @@ const Roles = () => {
     e.preventDefault();
     if (newRoleName) {
       dispatch(createRole({ groupId, roleName: newRoleName })); // Dispatch create role action
-      setNewRoleName(''); // Clear the input field
+      setNewRoleName(""); // Clear the input field
     }
   };
 
@@ -33,7 +41,7 @@ const Roles = () => {
   const handleSaveEditRole = (roleId) => {
     dispatch(editRole({ groupId, roleId, newName: editedRoleName }));
     setEditingRoleId(null); // Reset editing mode
-    setEditedRoleName('');
+    setEditedRoleName("");
   };
 
   const handleDeleteRole = (roleId) => {
@@ -46,16 +54,17 @@ const Roles = () => {
 
       {/* Create Role Form */}
       <form onSubmit={handleCreateRole} className="mb-4">
-        <input
-          type="text"
-          value={newRoleName}
-          onChange={(e) => setNewRoleName(e.target.value)}
-          placeholder="Enter role name"
-          className="p-2 border border-gray-300 rounded mr-2"
-        />
-        <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-          Create Role
-        </button>
+        <div className="flex items-center gap-2">
+          <Input
+            type="text"
+            value={newRoleName}
+            onChange={(e) => setNewRoleName(e.target.value)}
+            placeholder="Enter role name"
+          />
+          <Button type="submit" size="sm">
+            Create Role
+          </Button>
+        </div>
       </form>
 
       {/* Loading and Error Handling */}
@@ -70,34 +79,36 @@ const Roles = () => {
               <li key={role.id} className="mb-2">
                 {editingRoleId === role.id ? (
                   <div>
-                    <input
+                    <Input
                       type="text"
                       value={editedRoleName}
                       onChange={(e) => setEditedRoleName(e.target.value)}
                       className="p-2 border border-gray-300 rounded mr-2"
                     />
-                    <button
+                    <Button
                       onClick={() => handleSaveEditRole(role.id)}
-                      className="p-2 bg-green-500 text-white rounded"
+                      size="sm"
                     >
                       Save
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <div className="flex items-center">
                     <span>{role.name}</span>
-                    <button
+                    <Button
+                      size="sm"
+                      variant="secondary"
                       onClick={() => handleEditRole(role.id, role.name)}
-                      className="ml-4 p-2 bg-yellow-500 text-white rounded"
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="destructive"
                       onClick={() => handleDeleteRole(role.id)}
-                      className="ml-4 p-2 bg-red-500 text-white rounded"
                     >
-                      Delete
-                    </button>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 )}
               </li>
