@@ -1,8 +1,17 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../features/authSlice";
-import { Input } from "./ui/input";
 
 export function LoginForm({ className, ...props }) {
   const [username, setUsername] = useState("");
@@ -22,54 +31,63 @@ export function LoginForm({ className, ...props }) {
 
   return (
     <div className={`flex flex-col gap-6 ${className || ""}`} {...props}>
-      <div className="rounded-xl border border-neutral-600 bg-white text-neutral-700 shadow p-4 space-y-2.5">
-        <h2 className="text-2xl font-bold">IAM Login</h2>
-        <p>Enter your username and password below to login to your account.</p>
-        <div className="p-2">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <label>Username</label>
-                <Input
-                  placeholder="Username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
+      <Card>
+        <CardHeader>
+          <CardTitle>IAM Login</CardTitle>
+          <CardDescription>
+            Enter your username and password below to login to your account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="p-2">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    placeholder="Username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    placeholder="Password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="grid gap-2">
-                <label>Password</label>
-                <Input
-                  placeholder="Password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+
+              <Button
+                type="submit"
+                disabled={loading}
+                size="sm"
+                className="w-full"
+              >
+                {loading ? "Logging in..." : "Login"}
+              </Button>
+              {error && (
+                <p className="text-red-500 text-sm mt-2">
+                  {error.message || "Login failed"}
+                </p>
+              )}
+
+              <div className="mt-4 text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <Link to="/register" className="underline underline-offset-4">
+                  Sign up
+                </Link>
               </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-            {error && (
-              <p className="text-red-500 text-sm mt-2">
-                {error.message || "Login failed"}
-              </p>
-            )}
-
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link to="/register" className="underline underline-offset-4">
-                Sign up
-              </Link>
-            </div>
-          </form>
-        </div>
-      </div>
+            </form>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
