@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -158,14 +159,19 @@ const Users = () => {
               <td className="border px-4 py-2">{user.email}</td>
               <td className="border px-4 py-2">{user.username}</td>
               <td className="border px-4 py-2 text-center flex justify-center gap-2">
-                <Button variant="secondary" onClick={() => handleEdit(user)}>
-                  Edit
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => handleEdit(user)}
+                >
+                  <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
+                  size="icon"
                   variant="destructive"
                   onClick={() => handleDelete(user.id)}
                 >
-                  Delete
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </td>
             </tr>
