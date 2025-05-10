@@ -1,122 +1,123 @@
-// src/Pages/Roles.jsx
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom"; // To access groupId from the URL
 import {
+  fetchRoles,
   createRole,
   deleteRole,
   editRole,
-  fetchRoles,
+  assignGroupsToRole,
 } from "../features/rolesSlice";
+import { fetchGroups } from "../features/groupsSlice";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const Roles = () => {
-  const { groupId } = useParams(); // Get groupId from URL
   const dispatch = useDispatch();
-  const rolesState = useSelector((state) => state.roles);
-  const { roles = [], loading = false, error = null } = rolesState || {};
-  const [newRoleName, setNewRoleName] = useState('');
-  const [editingRoleId, setEditingRoleId] = useState(null);
-  const [editedRoleName, setEditedRoleName] = useState("");
+  const { roles } = useSelector((state) => state.roles ?? []);
+  const { groups } = useSelector((state) => state.groups ?? []);
+
+  const [selectedRoleId, setSelectedRoleId] = useState("");
+  const [selectedGroupIds, setSelectedGroupIds] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    dispatch(fetchRoles(groupId)); // Fetch roles for the specific group when component mounts
-  }, [dispatch, groupId]);
+    dispatch(fetchRoles());
+    dispatch(fetchGroups());
+  }, [dispatch]);
 
-  const handleCreateRole = (e) => {
-    e.preventDefault();
-    if (newRoleName) {
-      dispatch(createRole({ groupId, roleName: newRoleName })); // Dispatch create role action
-      setNewRoleName(""); // Clear the input field
+  const filteredGroups = groups.filter((g) =>
+    g.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const toggleGroupSelection = (groupId) => {
+    setSelectedGroupIds((prev) =>
+      prev.includes(groupId)
+        ? prev.filter((id) => id !== groupId)
+        : [...prev, groupId]
+    );
+  };
+
+  const handleAssignGroups = () => {
+    if (selectedRoleId && selectedGroupIds.length > 0) {
+      dispatch(assignGroupsToRole({ roleId: selectedRoleId, groupIds: selectedGroupIds }));
+      setSelectedGroupIds([]);
     }
   };
 
-  const handleEditRole = (roleId, roleName) => {
-    setEditingRoleId(roleId);
-    setEditedRoleName(roleName);
-  };
-
-  const handleSaveEditRole = (roleId) => {
-    dispatch(editRole({ groupId, roleId, newName: editedRoleName }));
-    setEditingRoleId(null); // Reset editing mode
-    setEditedRoleName("");
-  };
-
-  const handleDeleteRole = (roleId) => {
-    dispatch(deleteRole({ groupId, roleId }));
-  };
-
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-semibold mb-4">Roles for Group {groupId}</h1>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Assign Groups to Role</h2>
+      <div className="grid md:grid-cols-2 gap-6 mt-8">
+        {/* Role Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Select Role</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select onValueChange={(value) => setSelectedRoleId(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                {roles.map((role) => (
+                  <SelectItem key={role.id} value={role.id}>
+                    {role.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
 
-      {/* Create Role Form */}
-      <form onSubmit={handleCreateRole} className="mb-4">
-        <div className="flex items-center gap-2">
-          <Input
-            type="text"
-            value={newRoleName}
-            onChange={(e) => setNewRoleName(e.target.value)}
-            placeholder="Enter role name"
-          />
-          <Button type="submit" size="sm">
-            Create Role
-          </Button>
-        </div>
-      </form>
-
-      {/* Loading and Error Handling */}
-      {loading && <p>Loading roles...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
-
-      {/* Roles List */}
-      <div>
-        {roles.length > 0 ? (
-          <ul>
-            {roles.map((role) => (
-              <li key={role.id} className="mb-2">
-                {editingRoleId === role.id ? (
-                  <div>
-                    <Input
-                      type="text"
-                      value={editedRoleName}
-                      onChange={(e) => setEditedRoleName(e.target.value)}
-                      className="p-2 border border-gray-300 rounded mr-2"
-                    />
-                    <Button
-                      onClick={() => handleSaveEditRole(role.id)}
-                      size="sm"
-                    >
-                      Save
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <span>{role.name}</span>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleEditRole(role.id, role.name)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => handleDeleteRole(role.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No roles available for this group.</p>
-        )}
+        {/* Group Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Assign Groups</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input
+              type="text"
+              placeholder="Search groups..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="max-h-60 overflow-y-auto space-y-2 my-5">
+              {filteredGroups.map((group) => (
+                <div key={group.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={selectedGroupIds.includes(group.id)}
+                    onCheckedChange={() => toggleGroupSelection(group.id)}
+                  />
+                  <Label>{group.name}</Label>
+                </div>
+              ))}
+              {filteredGroups.length === 0 && (
+                <p className="text-gray-500 text-sm">No groups found.</p>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button onClick={handleAssignGroups} disabled={!selectedRoleId}>
+              Assign Selected
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

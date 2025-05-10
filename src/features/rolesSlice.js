@@ -38,6 +38,14 @@ export const deleteRole = createAsyncThunk("roles/deleteRole", async (roleId) =>
   return roleId;
 });
 
+export const assignGroupToRole = createAsyncThunk(
+  'roles/assignGroupToRole',
+  async ({ roleId, groupId }, thunkAPI) => {
+    const response = await axios.post(`/api/roles/${roleId}/groups`, { groupId });
+    return response.data;
+  }
+);
+
 const rolesSlice = createSlice({
   name: 'roles',
   initialState: { items: [], loading: false },
