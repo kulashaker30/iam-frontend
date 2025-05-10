@@ -146,13 +146,13 @@ function Groups() {
             <CardTitle>Assign Users to Group</CardTitle>
           </CardHeader>
           <CardContent>
-            <Select>
+            <Select value={selectedGroup} onValueChange={setSelectedGroup}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select group" />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {groups.map((group) => (
-                  <SelectItem key={group.id} value={group.id}>
+                  <SelectItem key={group.id} value={group.id.toString()}>
                     {group.name}
                   </SelectItem>
                 ))}
@@ -175,16 +175,19 @@ function Groups() {
             />
 
             <div className="max-h-60 overflow-y-auto space-y-2 my-5">
-              {filteredUsers.map((user) => (
-                <div key={user.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id="username"
-                    check={selectedUserIds.includes(user.id)}
-                    onChange={() => toggleUserSelection(user.id)}
-                  />
-                  <Label htmlFor="username">{user.username}</Label>
-                </div>
-              ))}
+              {filteredUsers.map((user) => {
+                const inputId = `user-${user.id}`;
+                return (
+                  <div key={user.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={inputId}
+                      checked={selectedUserIds.includes(user.id)}
+                      onCheckedChange={() => toggleUserSelection(user.id)}
+                    />
+                    <Label htmlFor={inputId}>{user.username}</Label>
+                  </div>
+                );
+              })}
               {filteredUsers.length === 0 && (
                 <p className="text-gray-500 text-sm">No users found.</p>
               )}
