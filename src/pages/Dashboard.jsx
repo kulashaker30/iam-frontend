@@ -1,46 +1,106 @@
-import { Link, Navigate, Outlet } from "react-router-dom";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { Shield, User, UserCheck, Users } from "lucide-react";
+import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 
 const Dashboard = () => {
   const groupIdExample = 1;
   const token = localStorage.getItem("token");
+  const location = useLocation();
 
   if (!token) return <Navigate to="/login" replace />;
-  
-  return (
-    <div className="min-h-screen flex" style={{backgroundColor: "dark-gray"}}>
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white p-6 space-y-4">
-        <h2 className="text-xl font-bold mb-6">Dashboard Menu</h2>
-        <nav className="space-y-2">
-          <Link to="groups" className="block hover:bg-gray-700 p-2 rounded">
-            Groups
-          </Link>
-          <Link
-            to={`groups/${groupIdExample}/roles`}
-            className="block hover:bg-gray-700 p-2 rounded"
-          >
-            Roles
-          </Link>
-          <Link
-            to={`groups/${groupIdExample}/users`}
-            className="block hover:bg-gray-700 p-2 rounded"
-          >
-            Users
-          </Link>
-          <Link
-            to="roles/1/permissions"
-            className="block hover:bg-gray-700 p-2 rounded"
-          >
-            Permissions
-          </Link>
-        </nav>
-      </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-8">
-        <Outlet /> {/* This renders the nested route content */}
-      </main>
-    </div>
+  return (
+    <SidebarProvider>
+      {/* Sidebar */}
+      <Sidebar>
+        <SidebarHeader>
+          <h2 className="font-medium text-lg">Dashboard Menu</h2>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
+                  to="groups"
+                  className={cn(
+                    location.pathname.endsWith("/groups") &&
+                      "bg-accent text-accent-foreground"
+                  )}
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>Groups</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
+                  to={`groups/${groupIdExample}/roles`}
+                  className={cn(
+                    location.pathname.includes("/roles") &&
+                      "bg-accent text-accent-foreground"
+                  )}
+                >
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  <span>Roles</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
+                  to="users"
+                  className={cn(
+                    location.pathname.endsWith("/users") &&
+                      "bg-accent text-accent-foreground"
+                  )}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Users</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
+                  to="roles/1/permissions"
+                  className={cn(
+                    location.pathname.includes("/permissions") &&
+                      "bg-accent text-accent-foreground"
+                  )}
+                >
+                  <Shield className="mr-2 h-4 w-4" />
+                  <span>Permissions</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger />
+        </header>
+
+        {/* Main content */}
+        <main className="flex-1 p-8">
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 

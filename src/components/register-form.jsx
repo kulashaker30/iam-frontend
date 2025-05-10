@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -48,7 +50,7 @@ export function RegisterForm({ className, ...props }) {
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <label>First Name</label>
-                <input
+                <Input
                   placeholder="First Name"
                   type="text"
                   className="border rounded-md p-2"
@@ -58,7 +60,7 @@ export function RegisterForm({ className, ...props }) {
               </div>
               <div className="grid gap-2">
                 <label>Last Name</label>
-                <input
+                <Input
                   placeholder="Last Name"
                   type="text"
                   className="border rounded-md p-2"
@@ -68,7 +70,7 @@ export function RegisterForm({ className, ...props }) {
               </div>
               <div className="grid gap-2">
                 <label>Email</label>
-                <input
+                <Input
                   placeholder="Email"
                   type="email"
                   className="border rounded-md p-2"
@@ -78,7 +80,7 @@ export function RegisterForm({ className, ...props }) {
               </div>
               <div className="grid gap-2">
                 <label>Username</label>
-                <input
+                <Input
                   placeholder="Username"
                   type="text"
                   className="border rounded-md p-2"
@@ -88,7 +90,7 @@ export function RegisterForm({ className, ...props }) {
               </div>
               <div className="grid gap-2">
                 <label>Password</label>
-                <input
+                <Input
                   placeholder="Password"
                   type="password"
                   className="border rounded-md p-2"
@@ -98,12 +100,14 @@ export function RegisterForm({ className, ...props }) {
               </div>
             </div>
 
-            <button
+            <Button
+              disabled={loading}
               type="submit"
-              className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
+              size="sm"
+              className="w-full"
             >
               {loading ? "Registering..." : "Register"}
-            </button>
+            </Button>
             {error && (
               <p className="text-red-500 text-sm mt-2">
                 {error.message || "Registration failed"}
