@@ -75,7 +75,7 @@ const Dashboard = () => {
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link
-                  to="roles/1/permissions"
+                  to="permissions"
                   className={cn(
                     location.pathname.includes("/permissions") &&
                       "bg-accent text-accent-foreground"
