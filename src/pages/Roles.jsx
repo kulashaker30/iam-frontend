@@ -42,6 +42,7 @@ const Roles = () => {
     dispatch(fetchGroups());
   }, [dispatch]);
 
+  console.log('Roles: ' + JSON.stringify(roles));
 
   const handleCreateRole = (e) => {
     e.preventDefault();
@@ -64,8 +65,9 @@ const Roles = () => {
   };
 
   const handleAssignGroups = () => {
-    if (selectedRoleId && selectedGroupIds.length > 0) {
+    if (selectedRoleId) {
       dispatch(assignGroupsToRole({ roleId: selectedRoleId, groupIds: selectedGroupIds }));
+      setSelectedRoleId(undefined)
       setSelectedGroupIds([]);
     }
   };
@@ -107,7 +109,17 @@ const Roles = () => {
             <CardTitle>Select Role</CardTitle>
           </CardHeader>
           <CardContent>
-            <Select onValueChange={(value) => setSelectedRoleId(value)}>
+            <Select value={selectedRoleId} onValueChange={(value) => {
+              setSelectedRoleId(value);
+              const role = roles.find((r) => r.id === value);
+              if (role) {
+                if(role.groupIds) {
+                  typeof role.groupIds === "string" ? setSelectedGroupIds(JSON.parse(role.groupIds)) : setSelectedGroupIds(role.groupIds);
+                }
+              }
+              else
+                setSelectedGroupIds([])
+            }}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -135,7 +147,11 @@ const Roles = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <div className="max-h-60 overflow-y-auto space-y-2 my-5">
-              {groups.map((group) => (
+            {groups
+              .filter((group) =>
+                group.name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((group) => (
                 <div key={group.id} className="flex items-center space-x-2">
                   <Checkbox
                     checked={selectedGroupIds.includes(group.id)}
@@ -144,9 +160,12 @@ const Roles = () => {
                   <Label>{group.name}</Label>
                 </div>
               ))}
-              {groups.length === 0 && (
-                <p className="text-gray-500 text-sm">No groups found.</p>
-              )}
+            {groups.filter((group) =>
+              group.name.toLowerCase().includes(searchQuery.toLowerCase())
+            ).length === 0 && (
+              <p className="text-gray-500 text-sm">No groups match your search.</p>
+            )}
+
             </div>
           </CardContent>
           <CardFooter>
